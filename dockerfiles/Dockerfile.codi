@@ -14,12 +14,24 @@
 FROM crops/codi:deps
 MAINTAINER Todor Minchev <todor.minchev@linux.intel.com>
 
+# keep us up to date
+RUN apt-get update && apt-get update -y 
+
+# clone codi
+RUN git clone -b master http://git.yoctoproject.org/git/crops /usr/src/crops 
+
 # Build and install CODI
-RUN git clone -b master http://git.yoctoproject.org/git/crops /usr/local/crops && \
-	cd /usr/local/crops/codi && \
+RUN 	cd /usr/src/crops/codi && \
 	make && \
 	mkdir -p /bin/codi && \
-	cp /usr/local/crops/codi/codi /bin/codi/run
+	cp /usr/src/crops/codi/codi /bin/codi/run
+
+# Build and install CODI DBG
+RUN 	cd /usr/src/crops/codi && \
+	make clean && \
+	make debug && \
+	mkdir -p /bin/codi && \
+	cp /usr/src/crops/codi/codi /bin/codi/runDBG
 
 # Monitor CODI and restart it on exit
 ENTRYPOINT ["supervise", "/bin/codi"]
