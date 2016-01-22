@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
 # This is a sanity test script for the CODI and toolchain Docker images.
-# This script has to be run from the dockerfiles directory.
+# This removes the old test containers, and builds a new codi and 4 new test toolchains.  
+# Then it runs ceed -l to talk to codi to list the 4 test toolchains
+# If you do not have the deps containers, it will build them but this takes awhile
 #
 # Example:
 #
-# ../tests/build_containers
+# ./tests/build_containers
 
 TOPDIR=`git rev-parse --show-toplevel`
 NUM_TOOLCHAINS=4
@@ -22,11 +24,6 @@ if [ "$Q"  != "" ]; then
     docker rmi -f $Q 
 fi
 
-Q=`docker images  -q crops/codi:deps`
-if [ "$Q"  != "" ]; then
-    echo "Removing codi deps image"
-    docker rmi -f $Q 
-fi
 
 II=0
 while [ $II -lt $NUM_TOOLCHAINS ]; do
@@ -43,31 +40,32 @@ if [ "$Q"  != "" ]; then
     echo "Removing toolchain image"
     docker rmi -f   $Q
 fi
-Q=`docker images  -q crops/toolchain:deps`
-if [ "$Q"  != "" ]; then
-    echo "Removing toolchain deps image"
-    docker rmi -f   $Q
-fi
-
-
-
 
 echo "Build CEED client"
 
 make clean -C ${TOPDIR}/ceed/; make -C ${TOPDIR}/ceed/
 
 cd ${TOPDIR}/dockerfiles;
-echo "Build CODI deps image"
-docker build -t crops/codi:deps -f Dockerfile.codi.deps ..
+
+Q=`docker images  -q crops/codi:deps`
+if [ "$Q"  == "" ]; then
+    echo "Build CODI deps image"
+    docker build -t crops/codi:deps -f Dockerfile.codi.deps --rm=true ..
+fi
+
 
 echo "Build CODI test image"
-docker build -t crops/codi:test -f Dockerfile.codi ..
+docker build -t crops/codi:test -f Dockerfile.codi --rm=true ..
 
-echo "Build toolchain deps image"
-docker build -t crops/toolchain:deps -f Dockerfile.toolchain.deps ..
+Q=`docker images  -q crops/toolchain:deps`
+if [ "$Q"  == "" ]; then
+    echo "Build toolchain deps image"
+    docker build -t crops/toolchain:deps -f Dockerfile.toolchain.deps  --rm=true ..
+
+fi
 
 echo "Build toolchain test image"
-docker build -t crops/toolchain:test -f Dockerfile.toolchain ..
+docker build -t crops/toolchain:test -f Dockerfile.toolchain --rm=true ..
 
 
 echo "Start CODI container"
@@ -82,13 +80,23 @@ while [ $II -lt $NUM_TOOLCHAINS ]; do
 done
 
 echo "List containers known to CODI"
-sleep 3; ../ceed/ceed -l
+sleep 3; 
+cd ${TOPDIR}/ceed
+ if [ -e `which docker-machine` ]; then 
+     ADDRESS=`docker-machine ip ${DOCKER_MACHINE_NAME}`
+ else
+     # linux can run over unix sockets rather than ip but ip is more cross platform
+     ADDRESS=127.0.0.1l
+fi
+./ceed -i $ADDRESS -s 10000 -l
 
 echo "Stop and remove toolchain containers"
-docker stop toolchain-test1; docker rm toolchain-test1
-docker stop toolchain-test2; docker rm toolchain-test2
-docker stop toolchain-test3; docker rm toolchain-test3
-docker stop toolchain-test4; docker rm toolchain-test4
+II=0
+while [ $II -lt $NUM_TOOLCHAINS ]; do
+    docker stop toolchain-test${II}; docker rm toolchain-test${II}
+    let II=$II+1
+done
+
 
 echo "Stop and remove CODI test container"
 docker stop codi-test; docker rm codi-test
