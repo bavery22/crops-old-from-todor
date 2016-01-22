@@ -86,7 +86,7 @@ cd ${TOPDIR}/ceed
      ADDRESS=`docker-machine ip ${DOCKER_MACHINE_NAME}`
  else
      # linux can run over unix sockets rather than ip but ip is more cross platform
-     ADDRESS=127.0.0.1l
+     ADDRESS=127.0.0.1
 fi
 ./ceed -i $ADDRESS -s 10000 -l
 
