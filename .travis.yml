@@ -15,8 +15,10 @@ before_install:
 
 
 script:
-  ./scripts/build_containers
-  ./scripts/run_containers
+  - ./scripts/build_containers
+  - docker images | grep -q "codi\:test"
+  - docker images | grep -q "toolchain\:test"
+  - ./scripts/run_containers
 
 notifications:
   email:
