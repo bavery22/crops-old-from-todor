@@ -17,12 +17,11 @@ before_install:
 script:
   - ./scripts/build_containers
   - docker images | grep codi | grep -q test
-  - docker images | grep toolchain | grep -q test
+  - docker images | grep toolchain | grep -q testCOW
   - ./scripts/run_containers
 
 notifications:
   email:
     recipients:
-      - avery.brian@gmail.com
     on_success: change
     on_failure: always
