@@ -14,8 +14,9 @@ compiler:
 before_install:
 
 
-script: 
-  ./scripts/build_containers 
+script:
+  ./scripts/build_containers
+  ./scripts/run_containers
 
 notifications:
   email:
