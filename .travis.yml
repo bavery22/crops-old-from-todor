@@ -4,6 +4,9 @@ python:
 
 
 sudo: required
+services:
+  - docker
+
 compiler:
   - gcc
   - clang
@@ -12,7 +15,7 @@ before_install:
 
 
 script: 
-  ./tests/buildcontainers
+  ./tests/build_containers 
 
 notifications:
   email:
