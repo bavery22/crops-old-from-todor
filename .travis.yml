@@ -16,8 +16,8 @@ before_install:
 
 script:
   - ./scripts/build_containers
-  - docker images | grep -q "codi\:test"
-  - docker images | grep -q "toolchain\:test"
+  - docker images | grep codi | grep -q test
+  - docker images | grep toolchain | grep -q test
   - ./scripts/run_containers
 
 notifications:
