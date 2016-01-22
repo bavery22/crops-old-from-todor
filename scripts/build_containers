@@ -21,7 +21,7 @@ fi
 Q=`docker images  -q crops/codi:test`
 if [ "$Q"  != "" ]; then
     echo "Removing codi image"
-    docker rmi -f $Q 
+    docker rmi -f $Q  
 fi
 
 
@@ -50,17 +50,17 @@ cd ${TOPDIR}/dockerfiles;
 Q=`docker images  -q crops/codi:deps`
 if [ "$Q"  == "" ]; then
     echo "Build CODI deps image"
-    docker build -t crops/codi:deps -f Dockerfile.codi.deps --rm=true ..
+    docker build -t crops/codi:deps -f Dockerfile.codi.deps --rm=true .. 
 fi
 
 
 echo "Build CODI test image"
-docker build -t crops/codi:test -f Dockerfile.codi --rm=true ..
+docker build -t crops/codi:test -f Dockerfile.codi --rm=true .. 
 
 Q=`docker images  -q crops/toolchain:deps`
 if [ "$Q"  == "" ]; then
     echo "Build toolchain deps image"
-    docker build -t crops/toolchain:deps -f Dockerfile.toolchain.deps  --rm=true ..
+    docker build -t crops/toolchain:deps -f Dockerfile.toolchain.deps  --rm=true .. 
 
 fi
 
