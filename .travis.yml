@@ -12,7 +12,7 @@ before_install:
 
 
 script: 
-  ./test/buildcontainers
+  ./tests/buildcontainers
 
 notifications:
   email:
