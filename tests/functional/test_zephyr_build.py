@@ -19,7 +19,7 @@ class ZephyrBuildTest(unittest.TestCase):
         self.dockerAddress = ceedutil.getDockerAddress().strip()
         self.codiPort=ceedutil.CodiPort
         self.zephyrName="zephyr-test"
-        self.zephyrPrjPath="/crops/zephyr-project/samples/nanokernel/apps/hello_world/"
+        self.zephyrPrjPath="$HOME/crops-test-workspace/zephyr-project/samples/nanokernel/apps/hello_world/"
         self.zephyrBin="outdir/zephyr.bin"
         self.devnull=open(os.devnull, 'w')
 
@@ -31,9 +31,9 @@ class ZephyrBuildTest(unittest.TestCase):
         ''' Checkout Zephyr source'''
         SUBSTRING="Note: checking out"
         try:
-            subprocess.call(["rm","-rf","/crops/zephyr-project"],stdout=self.devnull)
+            subprocess.call(["rm","-rf","$HOME/crops-test-workspace/zephyr-project"])
             subprocess.call(["ceed/ceed","-i",self.dockerAddress,"-d",self.zephyrName, "-s",str(self.codiPort),
-                "-g","git clone --branch v1.0.0 /zephyr-src /crops/zephyr-project"],stdout=self.devnull)
+                "-g","git clone --branch v1.0.0 /zephyr-src /crops/zephyr-project"])
         except subprocess.CalledProcessError as e:
             print e.output
             self.assertTrue(False)

@@ -18,3 +18,5 @@ def getDockerAddress():
     if cmd_exists('docker-machine'):
         ADDRESS=getDockerMachineAddress()
     return ADDRESS
+
+    
