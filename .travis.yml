@@ -20,6 +20,8 @@ compiler:
   - clang
 
 before_install:
+  # list docker-engine versions
+    - apt-cache madison docker-engine
 
 
 script:
