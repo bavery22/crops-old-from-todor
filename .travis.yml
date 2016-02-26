@@ -7,6 +7,14 @@ sudo: required
 services:
   - docker
 
+services:
+    - docker
+
+env:
+    global:
+        - DOCKER_VERSION=1.10.1-0~trusty
+
+
 compiler:
   - gcc
   - clang
